@@ -1,7 +1,7 @@
 import "server-only";
 import { Inter } from "next/font/google";
 import { expect, test } from "vitest";
-import { HomeLink } from "@/app/components/home-link";
+import { HomeLink } from "@/components/home-link";
 
 // Checks the vinext behaviour replicated in vitest.config.ts and test/setup-next.ts (workerd).
 test("resolves tsconfig path aliases", () => {
