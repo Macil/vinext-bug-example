@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { cloudflareTest } from "@cloudflare/vitest-plugin";
+import type { Plugin } from "vite";
 import { configDefaults, defineConfig } from "vitest/config";
 import { responseStoreServiceBinding } from "./cloudflare.config.ts";
 
@@ -67,9 +68,27 @@ function builtAppWorker(): AuxiliaryWorker {
   };
 }
 
+/**
+ * There's no real `next` package: the vinext plugin in vite.config.ts redirects `next/*` imports
+ * to its shims, but that config isn't loaded by Vitest. Every shim follows the same naming rule
+ * (`next/font/google` -> `vinext/shims/font-google`), so apply it here.
+ */
+function nextShims(): Plugin {
+  return {
+    name: "next-shims",
+    enforce: "pre",
+    resolveId(id, importer) {
+      const match = /^next\/(.+)$/.exec(id);
+      if (!match) return;
+      return this.resolve(`vinext/shims/${match[1].replaceAll("/", "-")}`, importer, { skipSelf: true });
+    },
+  };
+}
+
 const sharedExclude = [...configDefaults.exclude, ".cloudflare/**", "dist/**"];
 
 export default defineConfig({
+  plugins: [nextShims()],
   test: {
     projects: [
       {
