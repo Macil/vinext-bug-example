@@ -70,14 +70,18 @@ function builtAppWorker(): AuxiliaryWorker {
 
 /**
  * There's no real `next` package: the vinext plugin in vite.config.ts redirects `next/*` imports
- * to its shims, but that config isn't loaded by Vitest. Every shim follows the same naming rule
- * (`next/font/google` -> `vinext/shims/font-google`), so apply it here.
+ * (and `server-only`/`client-only`) to its shims, but that config isn't loaded by Vitest. Every
+ * shim follows the same naming rule (`next/font/google` -> `vinext/shims/font-google`), so apply
+ * it here.
  */
 function nextShims(): Plugin {
   return {
     name: "next-shims",
     enforce: "pre",
     resolveId(id, importer) {
+      if (id === "server-only" || id === "client-only") {
+        return this.resolve(`vinext/shims/${id}`, importer, { skipSelf: true });
+      }
       const match = /^next\/(.+)$/.exec(id);
       if (!match) return;
       return this.resolve(`vinext/shims/${match[1].replaceAll("/", "-")}`, importer, { skipSelf: true });
@@ -89,7 +93,9 @@ const sharedExclude = [...configDefaults.exclude, ".cloudflare/**", "dist/**"];
 
 export default defineConfig({
   plugins: [nextShims()],
+  resolve: { tsconfigPaths: true },
   test: {
+    setupFiles: ["test/setup-next.ts"],
     projects: [
       {
         extends: true,
@@ -101,6 +107,7 @@ export default defineConfig({
         ],
         test: {
           name: "unit",
+          env: { NODE_ENV: "test" },
           include: ["**/*.test.{ts,tsx}"],
           exclude: [...sharedExclude, "**/*.dom.test.{ts,tsx}", "**/*.integration.test.{ts,tsx}"],
         },
