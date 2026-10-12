@@ -1,0 +1,8 @@
+.counter {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.count {
+  font-variant-numeric: tabular-nums;
+}
