@@ -11,7 +11,7 @@
     "vinext": "^1.1.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^2.0.0-beta.sha-91c870c02",
+    "@cloudflare/vite-plugin": "2.0.0-beta.sha-91c870c02",
     "@cloudflare/vitest-plugin": "^1.4.0",
     "@tailwindcss/postcss": "latest",
     "@testing-library/dom": "^10.4.2",
@@ -39,6 +39,7 @@
     "deploy:response-store": "cf deploy --prebuilt --mode production --worker vinext-test-response-store",
     "test": "vitest run --project unit --project dom",
     "test:all": "vite build && vitest run",
-    "test:integration": "vite build && vitest run --project integration"
+    "test:integration": "vite build && vitest run --project integration",
+    "typecheck": "tsc"
   }
 }
