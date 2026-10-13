@@ -1,5 +1,7 @@
 This repository contains an example of a bug in Vinext.
 
+https://github.com/cloudflare/vinext/issues/3919
+
 ---
 
 # vinext app
