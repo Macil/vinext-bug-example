@@ -1,3 +1,7 @@
+This repository contains an example of a bug in Vinext.
+
+---
+
 # vinext app
 
 This project was created with create-vinext-app.
